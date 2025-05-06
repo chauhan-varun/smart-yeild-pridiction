@@ -136,8 +136,8 @@ crop_yield_train/
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/yourusername/crop_yield_train.git
-cd crop_yield_train
+git clone https://github.com/chauhan-varun/smart-yeild-pridiction.git
+cd smart-yeild-pridiction
 ```
 
 2. **Set up a virtual environment**:
