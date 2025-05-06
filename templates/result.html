@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction Results{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card result-card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Yield Prediction Results</h2>
+                    
+                    <div class="text-center mb-4">
+                        <div class="display-4 fw-bold text-success">{{ prediction|round(2) }}</div>
+                        <p class="lead">Tonnes per Hectare</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">Input Parameters</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>State:</strong>
+                                <span>{{ input_data.State }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>District:</strong>
+                                <span>{{ input_data.District }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Crop:</strong>
+                                <span>{{ input_data.Crop }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Year:</strong>
+                                <span>{{ input_data.Crop_Year }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Season:</strong>
+                                <span>{{ input_data.Season }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Area (ha):</strong>
+                                <span>{{ input_data.Area }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Production (tonnes):</strong>
+                                <span>{{ input_data.Production }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    {% if plot_data %}
+                    <div class="mb-4">
+                        <h5 class="mb-3">Yield Distribution for {{ input_data.Crop }}</h5>
+                        <div class="text-center">
+                            <img src="data:image/png;base64,{{ plot_data }}" class="img-fluid rounded" alt="Yield distribution">
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-primary me-2">Make Another Prediction</a>
+                        <a href="#" class="btn btn-outline-secondary me-2" onclick="window.print()">Print Results</a>
+                        
+                        {% if prediction_id %}
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                            Add Actual Yield
+                        </button>
+                        
+                        <!-- Feedback Modal -->
+                        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="feedbackModalLabel">Provide Actual Yield</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="/feedback" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="prediction_id" value="{{ prediction_id }}">
+                                            
+                                            <div class="mb-3">
+                                                <label for="actual_yield" class="form-label">Actual Yield (tonnes per hectare)</label>
+                                                <input type="number" step="0.01" class="form-control" id="actual_yield" name="actual_yield" required>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="comments" class="form-label">Comments (optional)</label>
+                                                <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user_id %}
+                        <a href="/history" class="btn btn-outline-primary">View History</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Interpretation</h5>
+                    <p>
+                        This prediction represents the expected crop yield in tonnes per hectare for the specified 
+                        parameters. The model considers regional factors, crop type, and seasonal variations.
+                    </p>
+                    <ul>
+                        <li><strong>Above 10:</strong> Excellent yield potential</li>
+                        <li><strong>5-10:</strong> Good yield potential</li>
+                        <li><strong>Below 5:</strong> Below average yield potential</li>
+                    </ul>
+                    <p class="text-muted mt-3">
+                        <i class="fas fa-database me-2"></i> This prediction has been saved to our database. If you have the actual yield values later, 
+                        you can provide feedback to help improve our model's accuracy.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

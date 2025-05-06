@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - Smart Agricultural Yield Prediction{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-card {
+        border-radius: 10px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s;
+    }
+    .analytics-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #28a745;
+    }
+    .stat-label {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+    .chart-container {
+        height: 350px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Prediction Analytics</h1>
+    
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card analytics-card h-100">
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ total_predictions }}</div>
+                    <div class="stat-label">Total Predictions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-12 mb-4">
+            <div class="card analytics-card">
+                <div class="card-body">
+                    <h3>Crop Performance Analytics</h3>
+                    <p class="text-muted">Average predicted yield by crop type (top 10)</p>
+                    <div class="chart-container">
+                        <canvas id="cropChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card analytics-card h-100">
+                <div class="card-body">
+                    <h3>Prediction Trends</h3>
+                    <p class="text-muted">Number of predictions over time</p>
+                    <div class="chart-container">
+                        <canvas id="dateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card analytics-card h-100">
+                <div class="card-body">
+                    <h3>Prediction Accuracy</h3>
+                    <p class="text-muted">Average error by crop type based on user feedback</p>
+                    <div class="chart-container">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card analytics-card">
+                <div class="card-body">
+                    <h3>Crop Performance Data</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Crop</th>
+                                    <th>Average Predicted Yield (t/ha)</th>
+                                    <th>Number of Predictions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in crop_stats %}
+                                <tr>
+                                    <td>{{ stat._id }}</td>
+                                    <td>{{ stat.avg_yield|round(2) }}</td>
+                                    <td>{{ stat.count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Crop Performance Chart
+        const cropData = {
+            labels: [{% for stat in crop_stats %} "{{ stat._id }}", {% endfor %}],
+            datasets: [{
+                label: 'Average Yield (t/ha)',
+                data: [{% for stat in crop_stats %} {{ stat.avg_yield }}, {% endfor %}],
+                backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 1
+            }]
+        };
+        
+        new Chart(document.getElementById('cropChart'), {
+            type: 'bar',
+            data: cropData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Average Yield (t/ha)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        // Date Chart
+        const dateData = {
+            labels: [{% for stat in date_stats %} "{{ stat._id }}", {% endfor %}],
+            datasets: [{
+                label: 'Number of Predictions',
+                data: [{% for stat in date_stats %} {{ stat.count }}, {% endfor %}],
+                backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1,
+                tension: 0.1,
+                fill: false
+            }]
+        };
+        
+        new Chart(document.getElementById('dateChart'), {
+            type: 'line',
+            data: dateData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Predictions'
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        // Accuracy Chart
+        const accuracyData = {
+            labels: [{% for stat in accuracy_stats %} "{{ stat._id }}", {% endfor %}],
+            datasets: [{
+                label: 'Average Error (t/ha)',
+                data: [{% for stat in accuracy_stats %} {{ stat.avg_error }}, {% endfor %}],
+                backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                borderColor: 'rgba(220, 53, 69, 1)',
+                borderWidth: 1
+            }]
+        };
+        
+        new Chart(document.getElementById('accuracyChart'), {
+            type: 'bar',
+            data: accuracyData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Average Error (t/ha)'
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+{% endblock %}

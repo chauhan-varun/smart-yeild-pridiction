@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Smart Agricultural Yield Prediction{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">About the Project</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Smart Agricultural Yield Prediction</h2>
+                    <p class="lead">
+                        This application uses machine learning to predict agricultural crop yields based on 
+                        historical data and various parameters such as location, crop type, and farming inputs.
+                    </p>
+                    <p>
+                        The system employs an XGBoost regression model trained on extensive agricultural data from 
+                        multiple regions of India. Our model analyzes patterns in historical crop yields to provide 
+                        accurate predictions for new input parameters.
+                    </p>
+                </div>
+            </div>
+            
+            <h2 class="h4 mb-3">Model Performance</h2>
+            <p>
+                Our XGBoost model has been trained and evaluated rigorously, achieving the following metrics:
+            </p>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Interpretation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>R² Score</td>
+                            <td>0.9178</td>
+                            <td>The model explains approximately 92% of the variance in crop yields</td>
+                        </tr>
+                        <tr>
+                            <td>RMSE</td>
+                            <td>266.19</td>
+                            <td>Root Mean Square Error measures the standard deviation of prediction errors</td>
+                        </tr>
+                        <tr>
+                            <td>MAE</td>
+                            <td>25.33</td>
+                            <td>Mean Absolute Error is the average of absolute errors between predicted and actual values</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2 class="h4 mb-3">Feature Importance</h2>
+            <p>
+                The model uses various features to make predictions. Here are the key features in order of importance:
+            </p>
+            <div class="text-center mb-4">
+                <img src="/visualizations/feature_importance_xgboost.png" class="img-fluid rounded" alt="Feature Importance">
+            </div>
+            
+            <h2 class="h4 mb-3">Technology Stack</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Data Processing</strong></span>
+                            <span>Dask, Pandas, NumPy</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Machine Learning</strong></span>
+                            <span>XGBoost, Scikit-learn</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Visualization</strong></span>
+                            <span>Matplotlib, Seaborn</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Web Application</strong></span>
+                            <span>Flask, Bootstrap</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>Deployment</strong></span>
+                            <span>Render</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h2 class="h4 mb-3">How to Use</h2>
+            <p>
+                To use this application:
+            </p>
+            <ol>
+                <li>Navigate to the home page and locate the prediction form</li>
+                <li>Select the state, district, crop type, and season</li>
+                <li>Enter the crop year, area (in hectares), and expected production (in tonnes)</li>
+                <li>Click "Predict Yield" to generate a prediction</li>
+                <li>View the results, which include the predicted yield and visualizations</li>
+            </ol>
+            
+            <h2 class="h4 mb-3">Future Improvements</h2>
+            <div class="card">
+                <div class="card-body">
+                    <ul>
+                        <li>Integration with weather data for more accurate predictions</li>
+                        <li>Addition of more crops and regions to the dataset</li>
+                        <li>Time series forecasting for future yield projections</li>
+                        <li>Mobile application for field use</li>
+                        <li>Integration with IoT devices for real-time data collection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Smart Agricultural Yield Prediction{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Smart Agricultural Yield Prediction</h1>
+        <p class="lead mb-4">Use machine learning to predict crop yields based on location, crop type, and farming parameters</p>
+        <a href="#prediction-form" class="btn btn-success btn-lg px-4 me-2">Make a Prediction</a>
+        <a href="#visualizations" class="btn btn-outline-light btn-lg px-4 me-2">View Insights</a>
+        <a href="/analytics" class="btn btn-outline-light btn-lg px-4">Analytics Dashboard</a>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container py-5">
+    <!-- Error Display -->
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Prediction Form -->
+    <section id="prediction-form" class="mb-5">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="mb-4">Predict Crop Yield</h2>
+                <p class="lead mb-4">Enter your agricultural details below to get a yield prediction based on our machine learning model.</p>
+                <div class="prediction-form">
+                    <form action="/predict_form" method="post">
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <select class="form-select" id="state" name="state" required>
+                                <option value="" selected disabled>Select State</option>
+                                {% for state in states %}
+                                <option value="{{ state }}">{{ state }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="district" class="form-label">District</label>
+                            <select class="form-select" id="district" name="district" required>
+                                <option value="" selected disabled>Select District</option>
+                                {% for district in districts %}
+                                <option value="{{ district }}">{{ district }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="crop" class="form-label">Crop</label>
+                            <select class="form-select" id="crop" name="crop" required>
+                                <option value="" selected disabled>Select Crop</option>
+                                {% for crop in crops %}
+                                <option value="{{ crop }}">{{ crop }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="crop_year" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="crop_year" name="crop_year" min="{{ min_year }}" max="{{ max_year + 5 }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="season" class="form-label">Season</label>
+                            <select class="form-select" id="season" name="season" required>
+                                <option value="" selected disabled>Select Season</option>
+                                {% for season in seasons %}
+                                <option value="{{ season }}">{{ season }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="area" class="form-label">Area (hectares)</label>
+                            <input type="number" step="0.01" class="form-control" id="area" name="area" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="production" class="form-label">Production (tonnes)</label>
+                            <input type="number" step="0.01" class="form-control" id="production" name="production" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg w-100">Predict Yield</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6 d-flex align-items-center">
+                <div class="w-100">
+                    {% if previous_predictions %}
+                    <div class="card h-100 mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="m-0">Your Recent Predictions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Crop</th>
+                                            <th>Yield (t/ha)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pred in previous_predictions %}
+                                        <tr>
+                                            <td>{{ pred.timestamp.strftime('%Y-%m-%d') }}</td>
+                                            <td>{{ pred.input_data.Crop }}</td>
+                                            <td class="fw-bold">{{ pred.predicted_yield|round(2) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="/history" class="btn btn-outline-success">View All Predictions</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80" 
+                         class="img-fluid rounded" alt="Agricultural field">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Key Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-brain fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Advanced ML Model</h5>
+                        <p class="card-text">Our XGBoost model achieves over 91% accuracy in predicting crop yields.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Data-Driven Insights</h5>
+                        <p class="card-text">Leverage extensive historical data to make informed agricultural decisions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Crop-Specific Analysis</h5>
+                        <p class="card-text">Get tailored predictions for specific crops in your region.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualizations -->
+    <section id="visualizations" class="mb-5">
+        <h2 class="text-center mb-4">Data Insights</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Yield by Crop</h5>
+                        <img src="/visualizations/yield_by_crop.png" class="img-fluid rounded" alt="Yield by crop">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Yield by Season</h5>
+                        <img src="/visualizations/yield_by_season.png" class="img-fluid rounded" alt="Yield by season">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Yield by State</h5>
+                        <img src="/visualizations/yield_by_state.png" class="img-fluid rounded" alt="Yield by state">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Yield Trends Over Time</h5>
+                        <img src="/visualizations/yield_by_year.png" class="img-fluid rounded" alt="Yield trends over time">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any additional JavaScript here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set current year as default
+        document.getElementById('crop_year').value = new Date().getFullYear();
+    });
+</script>
+{% endblock %}

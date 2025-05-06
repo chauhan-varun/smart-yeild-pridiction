@@ -1,0 +1,74 @@
+/* Custom CSS for Smart Agricultural Yield Prediction */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Hero section styling */
+.hero-section {
+    background: linear-gradient(rgba(0, 100, 0, 0.8), rgba(0, 100, 0, 0.9)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1332&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 5rem 0;
+    margin-bottom: 2rem;
+}
+
+/* Card styling */
+.feature-card {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.result-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Prediction form styling */
+.prediction-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Analytics dashboard styling */
+.stat-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Icons fallback - using Unicode characters for common Font Awesome icons */
+.icon-database::before {
+    content: "\f1c0";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+.icon-chart::before {
+    content: "\f201";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+.icon-seedling::before {
+    content: "\f4d8";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+.icon-brain::before {
+    content: "\f5dc";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
